@@ -49,7 +49,7 @@ export function useGym(userId) {
 
     const { data: allData } = await supabase
       .from('gym_logs')
-      .select('exercise_name, weight_kg, date')
+      .select('exercise_name, sets, reps, weight_kg, date, day_type')
       .eq('user_id', userId)
       .order('date', { ascending: false })
 
@@ -121,5 +121,5 @@ export function useGym(userId) {
   // Gym sessions this week (from habit logs)
   const gymSessionsThisWeek = todayLogs.length > 0 ? 1 : 0
 
-  return { exercises, todayLogs, loading, saveSession, addExercise, editExercise, deleteExercise, getPR, isNewPR }
+  return { exercises, todayLogs, allLogs, loading, saveSession, addExercise, editExercise, deleteExercise, getPR, isNewPR }
 }

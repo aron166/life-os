@@ -233,6 +233,24 @@ begin
   end loop;
 end $$;
 
+-- MEAL LOGS (added for per-meal content + protein tracking)
+create table if not exists meal_logs (
+  id          uuid default gen_random_uuid() primary key,
+  user_id     uuid references auth.users(id) on delete cascade not null,
+  date        date not null,
+  meal_number int not null,  -- 1 | 2 | 3
+  content     text,
+  protein_g   int,
+  done        boolean default false,
+  created_at  timestamptz default now(),
+  updated_at  timestamptz default now(),
+  unique(user_id, date, meal_number)
+);
+alter table meal_logs enable row level security;
+drop policy if exists "meal_logs_user_policy" on meal_logs;
+create policy "meal_logs_user_policy" on meal_logs for all
+  using (auth.uid() = user_id) with check (auth.uid() = user_id);
+
 -- ============================================================
 -- REALTIME (enable for habit_logs so cross-device sync works)
 -- ============================================================
