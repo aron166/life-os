@@ -36,18 +36,25 @@ export function HabitItem({ habit, done, streak, onToggle, onFreeze, freezeUsed,
           </span>
         )}
 
-        {/* Info toggle */}
+        {/* Info toggle — explicit 32px visual, 44px touch target via padding */}
         {showInfo && habit.description && (
           <button
             onClick={e => { e.stopPropagation(); setExpanded(v => !v) }}
-            className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 text-[10px] transition-all"
+            className="flex items-center justify-center flex-shrink-0 rounded-full transition-all"
             style={{
-              background: expanded ? 'var(--acc-dim)' : 'var(--bg4)',
-              border: '1px solid var(--border)',
-              color: expanded ? 'var(--acc)' : 'var(--muted)',
+              width: 28,
+              height: 28,
+              padding: 8,            // expands touch area without changing visual
+              margin: -8,            // compensate so layout stays tight
+              boxSizing: 'content-box',
+              background: expanded ? 'var(--acc-dim)' : 'transparent',
+              border: `1.5px solid ${expanded ? 'var(--acc2)' : 'var(--faint)'}`,
+              color: expanded ? 'var(--acc)' : 'var(--faint)',
               cursor: 'pointer',
-              minWidth: 20,
-              minHeight: 44,
+              fontSize: 11,
+              fontWeight: 600,
+              fontFamily: 'DM Mono, monospace',
+              letterSpacing: 0,
             }}
           >
             i

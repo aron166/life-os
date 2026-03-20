@@ -70,16 +70,23 @@ export function useHabits(userId) {
 
   const toggle = async (habitId) => {
     const newDone = !logs[habitId]
+    // Optimistic update
     setLogs(prev => ({ ...prev, [habitId]: newDone }))
 
-    await supabase.from('habit_logs').upsert({
+    const { error } = await supabase.from('habit_logs').upsert({
       user_id: userId,
       date: today,
       habit_id: habitId,
       done: newDone,
     }, { onConflict: 'user_id,date,habit_id' })
 
-    // Update streak
+    if (error) {
+      console.error('[useHabits] toggle error:', error.message)
+      // Revert on failure
+      setLogs(prev => ({ ...prev, [habitId]: !newDone }))
+      return
+    }
+
     await updateStreak(habitId, newDone)
     fetchStreaks()
   }

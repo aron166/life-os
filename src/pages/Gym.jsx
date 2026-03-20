@@ -14,7 +14,7 @@ const DAY_TYPES = [
 
 export default function Gym({ user }) {
   const {
-    exercises, todayLogs, allLogs, loading,
+    exercises, todayLogs, allLogs, loading, seeding,
     saveSession, addExercise, editExercise, deleteExercise,
     getPR, isNewPR,
   } = useGym(user?.id)
@@ -136,7 +136,9 @@ export default function Gym({ user }) {
         ))}
       </div>
 
-      {!selectedDay && <Callout type="acc">Select a workout above to log today's session.</Callout>}
+      {loading && <Callout type="acc">Loading exercises…</Callout>}
+      {seeding && <Callout type="acc">Setting up your exercises for the first time…</Callout>}
+      {!loading && !seeding && !selectedDay && <Callout type="acc">Select a workout above to log today's session.</Callout>}
 
       {selectedDay && (
         <>

@@ -16,7 +16,7 @@ import { greeting, formatDate, thisWeekDates } from '../lib/dateUtils'
 import { HABITS, MAIN_HABITS } from '../lib/constants'
 
 export default function Today({ user }) {
-  const { logs, streaks, weeklyLogs, toggle, useFreeze, freezeUsedThisWeek } = useHabits(user?.id)
+  const { logs, streaks, weeklyLogs, loading: habitsLoading, toggle, useFreeze, freezeUsedThisWeek } = useHabits(user?.id)
   const { tasks, saveTasks, dayType, entry, saveJournal } = useJournal(user?.id)
   const { todayMood, weekMoods, logMood } = useMood(user?.id)
   const { todayLog, avgSleep, underSevenDays, logSleep } = useSleep(user?.id)
@@ -52,12 +52,15 @@ export default function Today({ user }) {
       {/* Mood */}
       <MoodCheckIn current={todayMood} onSelect={logMood} />
 
+      {/* Focus timer — prominent above fold */}
+      <FocusTimer />
+
       {/* Metrics */}
       <div className="grid grid-cols-3 gap-3 mb-3.5">
         {[
-          { val: `${doneCount}/${mainHabits.length}`, lbl: 'Habits today', progress: true },
-          { val: gymCount,                             lbl: 'Gym this week' },
-          { val: dayLabels[dayType] || '—',           lbl: "Today's mode" },
+          { val: habitsLoading ? '…' : `${doneCount}/${mainHabits.length}`, lbl: 'Habits today', progress: true },
+          { val: gymCount,                                                    lbl: 'Gym this week' },
+          { val: dayLabels[dayType] || '—',                                  lbl: "Today's mode" },
         ].map((m, i) => (
           <div
             key={i}
@@ -66,7 +69,7 @@ export default function Today({ user }) {
           >
             <div className="font-syne text-2xl font-bold" style={{ color: 'var(--text)' }}>{m.val}</div>
             <div className="text-[11px] mt-1" style={{ color: 'var(--muted)' }}>{m.lbl}</div>
-            {m.progress && <ProgressBar value={doneCount} max={mainHabits.length} />}
+            {m.progress && !habitsLoading && <ProgressBar value={doneCount} max={mainHabits.length} />}
           </div>
         ))}
       </div>
@@ -75,17 +78,21 @@ export default function Today({ user }) {
         {/* Habits card */}
         <Card>
           <CardTitle>Today's non-negotiables</CardTitle>
-          {mainHabits.map(habit => (
-            <HabitItem
-              key={habit.id}
-              habit={habit}
-              done={!!logs[habit.id]}
-              streak={streaks[habit.id]?.streak ?? 0}
-              onToggle={toggle}
-              onFreeze={useFreeze}
-              freezeUsed={freezeUsedThisWeek(habit.id)}
-            />
-          ))}
+          {habitsLoading ? (
+            <div className="py-4 text-sm" style={{ color: 'var(--faint)' }}>Loading habits…</div>
+          ) : (
+            mainHabits.map(habit => (
+              <HabitItem
+                key={habit.id}
+                habit={habit}
+                done={!!logs[habit.id]}
+                streak={streaks[habit.id]?.streak ?? 0}
+                onToggle={toggle}
+                onFreeze={useFreeze}
+                freezeUsed={freezeUsedThisWeek(habit.id)}
+              />
+            ))
+          )}
         </Card>
 
         <div>
@@ -119,9 +126,6 @@ export default function Today({ user }) {
             underSevenDays={underSevenDays}
             onLog={() => setSleepModal(true)}
           />
-
-          {/* Focus timer */}
-          <FocusTimer />
         </div>
       </div>
 
