@@ -103,6 +103,15 @@ export const DEFAULT_EXERCISES = {
   ],
 }
 
+// ── Tomorrow reminder lines ───────────────────────────────────────────────────
+export const TOMORROW_REMINDER = {
+  team:   'Team day — set alarm for 7:45, prep tonight',
+  bar:    'Bar day — get your morning blocks done before the shift',
+  school: 'School day — protect the morning, hardest task first',
+  biz:    'Business day — define your one output the night before',
+  rest:   'Rest day — sleep in, no output pressure, recover fully',
+}
+
 // ── Schedule blocks ──────────────────────────────────────────────────────────
 export const SCHEDULES = {
   team: {
@@ -171,6 +180,17 @@ export const SCHEDULES = {
       { time: '17:00', title: 'Hard stop', desc: 'Did I make visible progress? Write one sentence on what shipped. Switch off.', tags: ['hard stop'] },
     ],
   },
+  rest: {
+    color: 'faint',
+    callout: "Rest day — let your nervous system reset. No output pressure. Recovery is productive.",
+    calloutType: 'info',
+    wins: [{ val: '8h+', lbl: 'Sleep target' }, { val: '0', lbl: 'Work blocks' }, { val: 'Full', lbl: 'Recovery' }],
+    blocks: [
+      { time: 'Morning', title: 'Sleep in — no alarm', desc: 'Let your body decide when to wake. This is the protocol.' },
+      { time: 'Day',     title: 'Sunlight + movement', desc: 'A walk, stretch, or light activity. Not gym. Not deadlines.' },
+      { time: 'Evening', title: 'Read + early sleep', desc: 'In bed by 22:30. Use the extra sleep to compound recovery.' },
+    ],
+  },
 }
 
 // ── Day type labels ──────────────────────────────────────────────────────────
@@ -179,7 +199,25 @@ export const DAY_TYPES = [
   { id: 'bar',    label: 'Bar day',       sub: 'Shift 5pm–2/3am',         icon: '🍸', color: 'orange' },
   { id: 'school', label: 'School day',    sub: 'Max output, self-directed',icon: '📚', color: 'green'  },
   { id: 'biz',    label: 'Business day',  sub: 'Visible progress only',   icon: '🚀', color: 'acc'    },
+  { id: 'rest',   label: 'Rest day',      sub: 'Recovery & recharge',     icon: '🌙', color: 'faint'  },
 ]
+
+// ── Day type color CSS vars ───────────────────────────────────────────────────
+export const DAY_TYPE_COLOR = {
+  team:   'var(--blue)',
+  bar:    'var(--orange)',
+  school: 'var(--green)',
+  biz:    'var(--acc)',
+  rest:   'var(--faint)',
+}
+
+export const DAY_TYPE_BG = {
+  team:   'var(--blue-dim,  var(--bg3))',
+  bar:    'var(--orange-dim, var(--bg3))',
+  school: 'var(--green-dim,  var(--bg3))',
+  biz:    'var(--acc-dim)',
+  rest:   'var(--bg3)',
+}
 
 // ── Tag type map ─────────────────────────────────────────────────────────────
 export const TAG_TYPES = {
@@ -219,9 +257,10 @@ export const MOOD_LEVELS = [
 
 // ── Nav items ────────────────────────────────────────────────────────────────
 export const NAV_ITEMS = [
-  { path: '/',          label: 'Dashboard',    dot: 'var(--acc)',    group: 'Today',    mobileIcon: '⊙', mobileLabel: 'Today' },
-  { path: '/schedule',  label: 'Day schedule', dot: 'var(--blue)',   group: 'Today',    mobileIcon: '◈', mobileLabel: 'Schedule' },
-  { path: '/habits',    label: 'Habits',       dot: 'var(--green)',  group: 'Today',    mobileIcon: '◉', mobileLabel: 'Habits' },
+  { path: '/',          label: 'Dashboard',      dot: 'var(--acc)',    group: 'Today',    mobileIcon: '⊙', mobileLabel: 'Today' },
+  { path: '/schedule',  label: 'Day schedule',   dot: 'var(--blue)',   group: 'Today',    mobileIcon: '◈', mobileLabel: 'Schedule' },
+  { path: '/planner',   label: 'Weekly planner', dot: 'var(--purple)', group: 'Today' },
+  { path: '/habits',    label: 'Habits',         dot: 'var(--green)',  group: 'Today',    mobileIcon: '◉', mobileLabel: 'Habits' },
   { path: '/gym',       label: 'Gym log',      dot: 'var(--orange)', group: 'Training', mobileIcon: '◧', mobileLabel: 'Gym' },
   { path: '/nutrition', label: 'Nutrition',    dot: 'var(--purple)', group: 'Training' },
   { path: '/journal',   label: 'Journal',      dot: 'var(--acc2)',   group: 'Mind' },
@@ -241,8 +280,9 @@ export const BOTTOM_NAV = [
 ]
 
 export const MORE_NAV = [
+  { path: '/planner',   label: 'Planner',      icon: '◫' },
   { path: '/nutrition', label: 'Nutrition',    icon: '◍' },
-  { path: '/journal',   label: 'Journal',      icon: '◫' },
+  { path: '/journal',   label: 'Journal',      icon: '◧' },
   { path: '/sleep',     label: 'Sleep',        icon: '◒' },
   { path: '/focus',     label: 'Focus rules',  icon: '◎' },
   { path: '/school',    label: 'School',       icon: '◪' },

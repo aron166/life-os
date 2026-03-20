@@ -13,11 +13,11 @@ import { useJournal } from '../hooks/useJournal'
 import { useMood }    from '../hooks/useMood'
 import { useSleep } from '../hooks/useSleep'
 import { greeting, formatDate, thisWeekDates } from '../lib/dateUtils'
-import { HABITS, MAIN_HABITS } from '../lib/constants'
+import { HABITS, MAIN_HABITS, DAY_TYPES, DAY_TYPE_COLOR, TOMORROW_REMINDER } from '../lib/constants'
 
 export default function Today({ user }) {
   const { logs, streaks, weeklyLogs, loading: habitsLoading, toggle, useFreeze, freezeUsedThisWeek } = useHabits(user?.id)
-  const { tasks, saveTasks, dayType, entry, saveJournal } = useJournal(user?.id)
+  const { tasks, saveTasks, dayType, tomorrowDayType, entry, saveJournal } = useJournal(user?.id)
   const { todayMood, weekMoods, logMood } = useMood(user?.id)
   const { todayLog, avgSleep, underSevenDays, logSleep } = useSleep(user?.id)
   const [sleepModal, setSleepModal] = useState(false)
@@ -51,6 +51,28 @@ export default function Today({ user }) {
 
       {/* Mood */}
       <MoodCheckIn current={todayMood} onSelect={logMood} />
+
+      {/* Tomorrow banner */}
+      {tomorrowDayType && (() => {
+        const info  = DAY_TYPES.find(d => d.id === tomorrowDayType)
+        const color = DAY_TYPE_COLOR[tomorrowDayType] || 'var(--muted)'
+        return (
+          <div
+            className="rounded-card px-4 py-3 mb-3.5 flex items-start gap-3"
+            style={{ background: 'var(--bg3)', border: `1px solid var(--border)`, borderLeft: `3px solid ${color}` }}
+          >
+            <span className="text-lg leading-none flex-shrink-0">{info?.icon}</span>
+            <div>
+              <div className="text-xs font-semibold mb-0.5" style={{ color }}>
+                Tomorrow — {info?.label}
+              </div>
+              <div className="text-[12px]" style={{ color: 'var(--muted)' }}>
+                {TOMORROW_REMINDER[tomorrowDayType]}
+              </div>
+            </div>
+          </div>
+        )
+      })()}
 
       {/* Focus timer — prominent above fold */}
       <FocusTimer />

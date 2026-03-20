@@ -1,27 +1,32 @@
 import { useState, useEffect, useCallback } from 'react'
+import { format, addDays } from 'date-fns'
 import { supabase } from '../lib/supabase'
 import { TODAY } from '../lib/dateUtils'
 
 export function useJournal(userId) {
-  const [entry, setEntry]       = useState({ worked: '', didnt: '', tomorrow: '', quick_note: '' })
-  const [history, setHistory]   = useState([])
-  const [tasks, setTasks]       = useState('')
-  const [dayType, setDayTypeState] = useState(null)
-  const [loading, setLoading]   = useState(true)
-  const today = TODAY()
+  const [entry, setEntry]             = useState({ worked: '', didnt: '', tomorrow: '', quick_note: '' })
+  const [history, setHistory]         = useState([])
+  const [tasks, setTasks]             = useState('')
+  const [dayType, setDayTypeState]    = useState(null)
+  const [tomorrowDayType, setTomorrowDayType] = useState(null)
+  const [loading, setLoading]         = useState(true)
+  const today    = TODAY()
+  const tomorrow = format(addDays(new Date(), 1), 'yyyy-MM-dd')
 
   const fetchToday = useCallback(async () => {
     if (!userId) return
-    const [jRes, tRes, dRes] = await Promise.all([
+    const [jRes, tRes, dRes, dTomRes] = await Promise.all([
       supabase.from('journal_entries').select('*').eq('user_id', userId).eq('date', today).single(),
       supabase.from('tasks').select('*').eq('user_id', userId).eq('date', today).single(),
       supabase.from('day_types').select('*').eq('user_id', userId).eq('date', today).single(),
+      supabase.from('day_types').select('*').eq('user_id', userId).eq('date', tomorrow).single(),
     ])
     if (jRes.data) setEntry(jRes.data)
     if (tRes.data) setTasks(tRes.data.content || '')
     if (dRes.data) setDayTypeState(dRes.data.day_type)
+    setTomorrowDayType(dTomRes.data?.day_type ?? null)
     setLoading(false)
-  }, [userId, today])
+  }, [userId, today, tomorrow])
 
   const fetchHistory = useCallback(async () => {
     if (!userId) return
@@ -62,5 +67,5 @@ export function useJournal(userId) {
     }, { onConflict: 'user_id,date' })
   }
 
-  return { entry, history, tasks, dayType, loading, saveJournal, saveTasks, saveDayType }
+  return { entry, history, tasks, dayType, tomorrowDayType, loading, saveJournal, saveTasks, saveDayType }
 }

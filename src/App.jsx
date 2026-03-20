@@ -13,6 +13,7 @@ import School from './pages/School'
 import Business from './pages/Business'
 import WeeklyReview from './pages/WeeklyReview'
 import Sleep from './pages/Sleep'
+import WeeklyPlanner from './pages/WeeklyPlanner'
 
 function LoadingScreen() {
   return (
@@ -44,6 +45,7 @@ export default function App() {
         <Route path="/business"  element={<Business user={user} />} />
         <Route path="/review"    element={<WeeklyReview user={user} />} />
         <Route path="/sleep"     element={<Sleep user={user} />} />
+        <Route path="/planner"   element={<WeeklyPlanner user={user} />} />
       </Routes>
     </Layout>
   )
